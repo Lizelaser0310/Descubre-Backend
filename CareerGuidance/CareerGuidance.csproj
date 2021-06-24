@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0-preview.5.21301.9">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0-preview.5.21301.9" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.0-preview.5.21321.1" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0-preview5-ci.20210617T122113" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Controllers" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Templates\ControllerGenerator\**" />
+        <Content Remove="Templates\ControllerGenerator\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="Templates\ControllerGenerator\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Remove="Templates\ControllerGenerator\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="Templates\ControllerGenerator\ApiControllerWithActions.cshtml" />
+        <_ContentIncludedByDefault Remove="Templates\ControllerGenerator\ApiControllerWithContext.cshtml" />
+        <_ContentIncludedByDefault Remove="Templates\ControllerGenerator\ApiEmptyController.cshtml" />
+        <_ContentIncludedByDefault Remove="Templates\ControllerGenerator\ControllerWithActions.cshtml" />
+        <_ContentIncludedByDefault Remove="Templates\ControllerGenerator\EmptyController.cshtml" />
+        <_ContentIncludedByDefault Remove="Templates\ControllerGenerator\MvcControllerWithContext.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+</Project>
