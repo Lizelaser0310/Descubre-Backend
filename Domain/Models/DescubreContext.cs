@@ -30,6 +30,7 @@ namespace Domain.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseNpgsql("Host=localhost;Database=Descubre;Username=postgres;Password='_fIq}Q#1;'");
             }
         }
@@ -175,6 +176,10 @@ namespace Domain.Models
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("timestamp with time zone")
                     .HasColumnName("Created_at");
+
+                entity.Property(e => e.Denomination)
+                    .IsRequired()
+                    .HasMaxLength(256);
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("timestamp with time zone")

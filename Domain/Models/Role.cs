@@ -11,7 +11,7 @@ namespace Domain.Models
         }
 
         public int Id { get; set; }
-        public int Denomination { get; set; }
+        public string Denomination { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
