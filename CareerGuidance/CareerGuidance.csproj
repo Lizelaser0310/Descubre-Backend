@@ -2,6 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+        <RestoreAdditionalProjectSources>
+          https://api.nuget.org/v3/index.json;
+          https://www.myget.org/F/npgsql-unstable/api/v3/index.json 
+        </RestoreAdditionalProjectSources>
     </PropertyGroup>
 
     <ItemGroup>
