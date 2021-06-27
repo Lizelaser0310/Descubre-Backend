@@ -34,7 +34,7 @@ namespace CareerGuidance.Controllers
         [Route("[action]")]
         public async Task<ActionResult<String>> Login(LoginVm json)
         {
-            User user = await _context.User
+            User user = await _context.User.Include(u=>u.Rol)
                 .Where(x => x.Username.Equals(json.Username) || x.Email.Equals(json.Username))
                 .FirstOrDefaultAsync();
 

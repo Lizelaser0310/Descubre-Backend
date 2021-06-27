@@ -2,22 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CareerGuidance.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
+using Lizelaser0310.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 
 namespace CareerGuidance.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly DescubreContext _context;
+        private readonly IWebHostEnvironment _env;
+        private readonly IKeys _keys;
 
-        public UserController(DescubreContext context)
+        public UserController(DescubreContext context, IKeys keys, IWebHostEnvironment env)
         {
             _context = context;
+            _keys = keys;
+            _env = env;
         }
 
         // GET: api/User
@@ -48,25 +57,30 @@ namespace CareerGuidance.Controllers
         {
             if (id != user.Id)
             {
-                return BadRequest();
+                return BadRequest(ErrorVm.Create("El id del usuario no coincide con el objeto enviado"));
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            var userDb = await _context.User.SingleOrDefaultAsync(u => u.Id == id);
 
+            if (userDb==null)
+            {
+                return BadRequest(ErrorVm.Create("El usuario no existe"));
+            }
+            
+            _context.ChangeTracker.Clear();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                user.UpdatedAt = DateTime.Now;
+                user.Password = user.Password!=null? AuthUtility.HashPassword(user.Password,_keys.EncryptionKey):userDb.Password;
+                _context.Entry(user).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                await transaction.RollbackAsync();
+                throw;
             }
 
             return NoContent();
@@ -77,8 +91,32 @@ namespace CareerGuidance.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
+            if (user==null)
+            {
+                return BadRequest();
+            }
+            var dbUser = await _context.User
+                .Where(u => u.Username.Equals(user.Username) && u.Email.Equals(user.Email) && u.Dni.Equals(u.Dni))
+                .SingleOrDefaultAsync();
+            
+            if (dbUser != null) return BadRequest(new { error = "El usuario ya existe" });
+            
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                user.Foto = ImageUtility.SaveImage(_env.ContentRootPath, user.Foto);
+                user.Password = AuthUtility.HashPassword(user.Password, _keys.EncryptionKey);
+                user.CreatedAt = DateTime.Now;
+                user.Status = true;
+                _context.User.Add(user);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.CommitAsync();
+                throw;
+            }
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }

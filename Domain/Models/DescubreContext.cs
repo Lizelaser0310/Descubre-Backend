@@ -209,6 +209,10 @@ namespace Domain.Models
 
                 entity.Property(e => e.Birthday).HasColumnType("timestamp with time zone");
 
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("created_at");
+
                 entity.Property(e => e.Dni)
                     .HasMaxLength(8)
                     .HasColumnName("DNI");
@@ -234,6 +238,10 @@ namespace Domain.Models
                     .HasMaxLength(512);
 
                 entity.Property(e => e.Phone).HasMaxLength(32);
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("updated_at");
 
                 entity.Property(e => e.Username)
                     .IsRequired()

@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CareerGuidance.Controllers
 {
+    [Authorize(Roles="Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class QuestionController : ControllerBase
