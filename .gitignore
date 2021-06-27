@@ -6,7 +6,6 @@
 # Secrets
 .env*
 .pgpass
-**/appsettings.*.json
 
 # IDEs
 .idea/
