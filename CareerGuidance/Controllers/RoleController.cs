@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CareerGuidance.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CareerGuidance.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class RoleController : ControllerBase
@@ -48,25 +51,30 @@ namespace CareerGuidance.Controllers
         {
             if (id != role.Id)
             {
-                return BadRequest();
+                return BadRequest(ErrorVm.Create("El id del rol no coincide con el objeto enviado"));
             }
+            
+            var roleDb = await _context.Role.SingleOrDefaultAsync(r => r.Id == id);
 
-            _context.Entry(role).State = EntityState.Modified;
-
+            if (roleDb==null)
+            {
+                return BadRequest(ErrorVm.Create("El rol no existe"));
+            }
+            
+            _context.ChangeTracker.Clear();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
             try
             {
+                role.UpdatedAt = DateTime.Now;
+                _context.Entry(role).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                await transaction.RollbackAsync();
+                throw;
             }
 
             return NoContent();
@@ -77,8 +85,31 @@ namespace CareerGuidance.Controllers
         [HttpPost]
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
-            _context.Role.Add(role);
-            await _context.SaveChangesAsync();
+            if (role==null)
+            {
+                return BadRequest();
+            }
+            var dbRole = await _context.Role
+                .Where(u => u.Denomination.Equals(role.Denomination))
+                .SingleOrDefaultAsync();
+            
+            if (dbRole != null) return BadRequest(new { error = "El rol ya existe" });
+            
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
+            try
+            {
+                role.CreatedAt = DateTime.Now;
+                role.Status = true;
+                _context.Role.Add(role);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.CommitAsync();
+                throw;
+            }
 
             return CreatedAtAction("GetRole", new { id = role.Id }, role);
         }

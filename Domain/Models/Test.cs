@@ -7,8 +7,8 @@ namespace Domain.Models
     {
         public Test()
         {
-            Question = new HashSet<Question>();
-            Result = new HashSet<Result>();
+            Modality = new HashSet<Modality>();
+            TestResult = new HashSet<TestResult>();
         }
 
         public int Id { get; set; }
@@ -19,7 +19,7 @@ namespace Domain.Models
         public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
 
-        public virtual ICollection<Question> Question { get; set; }
-        public virtual ICollection<Result> Result { get; set; }
+        public virtual ICollection<Modality> Modality { get; set; }
+        public virtual ICollection<TestResult> TestResult { get; set; }
     }
 }

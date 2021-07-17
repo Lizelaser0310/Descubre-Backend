@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.3" use-changelog="false" last-position="0,0" last-zoom="0.8" max-obj-count="18"
+	 default-owner="postgres">
+<database name="Descubre" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" layer="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="Response" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1160" y="420"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="TestResultId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="AlternativeId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Score" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="Response_PK" type="pk-constr" table="public.&quot;Response&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="User" layer="0" collapse-mode="2" max-obj-count="14" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="340" y="20"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="RolId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Username" not-null="true">
+		<type name="varchar" length="512"/>
+	</column>
+	<column name="Password" not-null="true">
+		<type name="varchar" length="512"/>
+	</column>
+	<column name="DNI">
+		<type name="varchar" length="8"/>
+	</column>
+	<column name="LastName" not-null="true">
+		<type name="varchar" length="256"/>
+	</column>
+	<column name="FirstName" not-null="true">
+		<type name="varchar" length="256"/>
+	</column>
+	<column name="Email" not-null="true">
+		<type name="varchar" length="512"/>
+	</column>
+	<column name="Birthday" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Gender" not-null="true">
+		<type name="varchar" length="1"/>
+	</column>
+	<column name="Phone">
+		<type name="varchar" length="32"/>
+	</column>
+	<column name="Status" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="Usuario_pk" type="pk-constr" table="public.&quot;User&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Career" layer="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1280" y="1300"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Denomination" not-null="true">
+		<type name="varchar" length="512"/>
+	</column>
+	<column name="Information" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Duration" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Created_at" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Updated_at">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Status" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="Carrera_pk" type="pk-constr" table="public.&quot;Career&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Role" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="20" y="380"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Denomination" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Created_at" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Updated_at">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Status" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="Rol_pk" type="pk-constr" table="public.&quot;Role&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Institution" layer="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="600"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Denomination" not-null="true">
+		<type name="varchar" length="1024"/>
+	</column>
+	<column name="Information" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Created_at" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Updated_at">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Status" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="Institution_pk" type="pk-constr" table="public.&quot;Institution&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Recomendation" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1620" y="500"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ResultId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="CareerId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Comments">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="Recomendacion_pk" type="pk-constr" table="public.&quot;Recomendation&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Test" layer="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="420" y="400"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Denomination" not-null="true">
+		<type name="varchar" length="512"/>
+	</column>
+	<column name="AverageTime" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Instructions">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Created_at" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Updated_at">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Status" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="Prueba_pk" type="pk-constr" table="public.&quot;Test&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="QuestionType" configuration="enumeration">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<enumeration values="Select,RadioButton"/>
+</usertype>
+
+<table name="Alternative" layer="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="920" y="680"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ModalityId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Denomination" not-null="true">
+		<type name="varchar" length="1024"/>
+	</column>
+	<column name="Weight">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Created_at" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Updated_at">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Status" not-null="true">
+		<type name="bool" length="0"/>
+	</column>
+	<constraint name="Pregunta_pk" type="pk-constr" table="public.&quot;Alternative&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="InstitutionCareer" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="220" y="1080"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="InstitutionId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="CareerId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="InstitutionCareer_pk" type="pk-constr" table="public.&quot;InstitutionCareer&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="ResultState" configuration="enumeration">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<enumeration values="Finished,OnProgress,Cancelled"/>
+</usertype>
+
+<table name="Result" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1300" y="60"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="UserId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Status" not-null="true">
+		<type name="public.&quot;ResultState&quot;" length="0"/>
+	</column>
+	<column name="StartDate" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="EndDate" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="Result_pk" type="pk-constr" table="public.&quot;Result&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Modality" layer="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="500" y="740"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="TestId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Denomination" not-null="true">
+		<type name="varchar" length="512"/>
+	</column>
+	<column name="Description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Image">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Created_at" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Updated_at">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="Status" not-null="true">
+		<type name="bool" length="0"/>
+	</column>
+	<constraint name="Modality_pk" type="pk-constr" table="public.&quot;Modality&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="TestResult" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="740" y="220"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ResultId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="TestId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ModalityId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Total" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="TestResult_PK" type="pk-constr" table="public.&quot;TestResult&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="CareerModality" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="960" y="1020"/>
+	<column name="Id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="CareerId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ModalityId" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="Weight" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="CareerModality_pk" type="pk-constr" table="public.&quot;CareerModality&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="TestResult_Response_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;TestResult&quot;" table="public.&quot;Response&quot;">
+	<columns names="TestResultId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Alternative_Response_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Alternative&quot;" table="public.&quot;Response&quot;">
+	<columns names="AlternativeId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Role_User_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Role&quot;" table="public.&quot;User&quot;">
+	<columns names="RolId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Result_Recomendation_Fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Result&quot;" table="public.&quot;Recomendation&quot;">
+	<columns names="ResultId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Career_recomendation_Fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Career&quot;" table="public.&quot;Recomendation&quot;">
+	<columns names="CareerId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_Modality_Question" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Modality&quot;" table="public.&quot;Alternative&quot;">
+	<columns names="ModalityId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Institution_InstitutionCareer_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Institution&quot;" table="public.&quot;InstitutionCareer&quot;">
+	<columns names="InstitutionId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Career_InstitutionCareer_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Career&quot;" table="public.&quot;InstitutionCareer&quot;">
+	<columns names="CareerId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="User_Result_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;User&quot;" table="public.&quot;Result&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_Test_Modality" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Test&quot;" table="public.&quot;Modality&quot;">
+	<columns names="TestId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Result_TestResult_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Result&quot;" table="public.&quot;TestResult&quot;">
+	<columns names="ResultId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Test_TestResult_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Test&quot;" table="public.&quot;TestResult&quot;">
+	<columns names="TestId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Modality_TestResult_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Modality&quot;" table="public.&quot;TestResult&quot;">
+	<columns names="ModalityId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Career_CareerModality_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Career&quot;" table="public.&quot;CareerModality&quot;">
+	<columns names="CareerId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="Modality_CareerModality_FK" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;Modality&quot;" table="public.&quot;CareerModality&quot;">
+	<columns names="ModalityId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="&quot;rel_Response_Question&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;Response&quot;"
+	 dst-table="public.&quot;Alternative&quot;" reference-fk="Alternative_Response_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_User_Role&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;User&quot;"
+	 dst-table="public.&quot;Role&quot;" reference-fk="Role_User_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Recomendation_Result&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;Recomendation&quot;"
+	 dst-table="public.&quot;Result&quot;" reference-fk="Result_Recomendation_Fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Recomendation_Career&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;Recomendation&quot;"
+	 dst-table="public.&quot;Career&quot;" reference-fk="Career_recomendation_Fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_InstitutionCareer_Institution&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;InstitutionCareer&quot;"
+	 dst-table="public.&quot;Institution&quot;" reference-fk="Institution_InstitutionCareer_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_InstitutionCareer_Career&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;InstitutionCareer&quot;"
+	 dst-table="public.&quot;Career&quot;" reference-fk="Career_InstitutionCareer_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Result_User&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;Result&quot;"
+	 dst-table="public.&quot;User&quot;" reference-fk="User_Result_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Modality_Test&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;Modality&quot;"
+	 dst-table="public.&quot;Test&quot;" reference-fk="FK_Test_Modality"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Question_Modality&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;Alternative&quot;"
+	 dst-table="public.&quot;Modality&quot;" reference-fk="FK_Modality_Question"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_TestResult_Result&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;TestResult&quot;"
+	 dst-table="public.&quot;Result&quot;" reference-fk="Result_TestResult_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_TestResult_Test&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;TestResult&quot;"
+	 dst-table="public.&quot;Test&quot;" reference-fk="Test_TestResult_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Response_TestResult&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;Response&quot;"
+	 dst-table="public.&quot;TestResult&quot;" reference-fk="TestResult_Response_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_CareerModality_Career&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;CareerModality&quot;"
+	 dst-table="public.&quot;Career&quot;" reference-fk="Career_CareerModality_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_CareerModality_Modality&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;CareerModality&quot;"
+	 dst-table="public.&quot;Modality&quot;" reference-fk="Modality_CareerModality_FK"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_TestResult_Modality&quot;" type="relfk" layer="0"
+	 src-table="public.&quot;TestResult&quot;"
+	 dst-table="public.&quot;Modality&quot;" reference-fk="Modality_TestResult_FK"
+	 src-required="false" dst-required="true"/>
+
+</dbmodel>

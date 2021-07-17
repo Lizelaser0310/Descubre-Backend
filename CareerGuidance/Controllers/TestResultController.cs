@@ -14,58 +14,51 @@ namespace CareerGuidance.Controllers
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ResultController : ControllerBase
+    public class TestResultController : ControllerBase
     {
         private readonly DescubreContext _context;
 
-        public ResultController(DescubreContext context)
+        public TestResultController(DescubreContext context)
         {
             _context = context;
         }
 
-        // GET: api/Result
+        // GET: api/TestResult
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Result>>> GetResult()
+        public async Task<ActionResult<IEnumerable<TestResult>>> GetTestResult()
         {
-            return await _context.Result.ToListAsync();
+            return await _context.TestResult.ToListAsync();
         }
 
-        // GET: api/Result/5
+        // GET: api/TestResult/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result>> GetResult(int id)
+        public async Task<ActionResult<TestResult>> GetTestResult(int id)
         {
-            var result = await _context.Result.FindAsync(id);
+            var testResult = await _context.TestResult.FindAsync(id);
 
-            if (result == null)
+            if (testResult == null)
             {
                 return NotFound();
             }
 
-            return result;
+            return testResult;
         }
 
-        // PUT: api/Result/5
+        // PUT: api/TestResult/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutResult(int id, Result result)
+        public async Task<IActionResult> PutTestResult(int id, TestResult testResult)
         {
-            if (id != result.Id)
+            if (id != testResult.Id)
             {
-                return BadRequest(ErrorVm.Create("El id del resultado no coincide con el objeto enviado"));
+                return BadRequest(ErrorVm.Create("El id del resultado por test no coincide con el objeto enviado"));
             }
-            
-            var resultDb = await _context.Result.SingleOrDefaultAsync(r => r.Id == id);
 
-            if (resultDb==null)
-            {
-                return BadRequest(ErrorVm.Create("El resultado no existe"));
-            }
-            
             _context.ChangeTracker.Clear();
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                _context.Entry(result).State = EntityState.Modified;
+                _context.Entry(testResult).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
@@ -78,12 +71,12 @@ namespace CareerGuidance.Controllers
             return NoContent();
         }
 
-        // POST: api/Result
+        // POST: api/TestResult
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Result>> PostResult(Result result)
+        public async Task<ActionResult<TestResult>> PostTestResult(TestResult testResult)
         {
-            if (result==null)
+            if (testResult==null)
             {
                 return BadRequest();
             }
@@ -92,7 +85,7 @@ namespace CareerGuidance.Controllers
             
             try
             {
-                _context.Result.Add(result);
+                _context.TestResult.Add(testResult);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
@@ -102,29 +95,28 @@ namespace CareerGuidance.Controllers
                 throw;
             }
 
-
-            return CreatedAtAction("GetResult", new { id = result.Id }, result);
+            return CreatedAtAction("GetTestResult", new { id = testResult.Id }, testResult);
         }
 
-        // DELETE: api/Result/5
+        // DELETE: api/TestResult/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteResult(int id)
+        public async Task<IActionResult> DeleteTestResult(int id)
         {
-            var result = await _context.Result.FindAsync(id);
-            if (result == null)
+            var testResult = await _context.TestResult.FindAsync(id);
+            if (testResult == null)
             {
                 return NotFound();
             }
 
-            _context.Result.Remove(result);
+            _context.TestResult.Remove(testResult);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool ResultExists(int id)
+        private bool TestResultExists(int id)
         {
-            return _context.Result.Any(e => e.Id == id);
+            return _context.TestResult.Any(e => e.Id == id);
         }
     }
 }

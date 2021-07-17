@@ -15,15 +15,18 @@ namespace Domain.Models
         {
         }
 
+        public virtual DbSet<Alternative> Alternative { get; set; }
         public virtual DbSet<Career> Career { get; set; }
+        public virtual DbSet<CareerModality> CareerModality { get; set; }
         public virtual DbSet<Institution> Institution { get; set; }
         public virtual DbSet<InstitutionCareer> InstitutionCareer { get; set; }
-        public virtual DbSet<Question> Question { get; set; }
+        public virtual DbSet<Modality> Modality { get; set; }
         public virtual DbSet<Recomendation> Recomendation { get; set; }
         public virtual DbSet<Response> Response { get; set; }
         public virtual DbSet<Result> Result { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Test> Test { get; set; }
+        public virtual DbSet<TestResult> TestResult { get; set; }
         public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -41,6 +44,29 @@ namespace Domain.Models
                 .HasPostgresEnum(null, "ResultState", new[] { "Finished", "OnProgress", "Cancelled" })
                 .HasAnnotation("Relational:Collation", "en_US.utf8");
 
+            modelBuilder.Entity<Alternative>(entity =>
+            {
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("Created_at");
+
+                entity.Property(e => e.Denomination)
+                    .IsRequired()
+                    .HasMaxLength(1024);
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("Updated_at");
+
+                entity.HasOne(d => d.Modality)
+                    .WithMany(p => p.Alternative)
+                    .HasForeignKey(d => d.ModalityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Modality_Question");
+            });
+
             modelBuilder.Entity<Career>(entity =>
             {
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
@@ -53,9 +79,28 @@ namespace Domain.Models
                     .IsRequired()
                     .HasMaxLength(512);
 
+                entity.Property(e => e.Information).IsRequired();
+
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("timestamp with time zone")
                     .HasColumnName("Updated_at");
+            });
+
+            modelBuilder.Entity<CareerModality>(entity =>
+            {
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+                entity.HasOne(d => d.Career)
+                    .WithMany(p => p.CareerModality)
+                    .HasForeignKey(d => d.CareerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Career_CareerModality_FK");
+
+                entity.HasOne(d => d.Modality)
+                    .WithMany(p => p.CareerModality)
+                    .HasForeignKey(d => d.ModalityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Modality_CareerModality_FK");
             });
 
             modelBuilder.Entity<Institution>(entity =>
@@ -94,24 +139,27 @@ namespace Domain.Models
                     .HasConstraintName("Institution_InstitutionCareer_FK");
             });
 
-            modelBuilder.Entity<Question>(entity =>
+            modelBuilder.Entity<Modality>(entity =>
             {
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
 
-                entity.Property(e => e.Alternatives)
-                    .IsRequired()
-                    .HasColumnType("character varying(128)[]");
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("Created_at");
 
-                entity.Property(e => e.Question1)
+                entity.Property(e => e.Denomination)
                     .IsRequired()
-                    .HasMaxLength(1024)
-                    .HasColumnName("Question");
+                    .HasMaxLength(512);
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("Updated_at");
 
                 entity.HasOne(d => d.Test)
-                    .WithMany(p => p.Question)
+                    .WithMany(p => p.Modality)
                     .HasForeignKey(d => d.TestId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Test_Question_Fk");
+                    .HasConstraintName("FK_Test_Modality");
             });
 
             modelBuilder.Entity<Recomendation>(entity =>
@@ -135,17 +183,17 @@ namespace Domain.Models
             {
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
 
-                entity.HasOne(d => d.Question)
+                entity.HasOne(d => d.Alternative)
                     .WithMany(p => p.Response)
-                    .HasForeignKey(d => d.QuestionId)
+                    .HasForeignKey(d => d.AlternativeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Questions_Response_Fk");
+                    .HasConstraintName("Alternative_Response_FK");
 
-                entity.HasOne(d => d.Result)
+                entity.HasOne(d => d.TestResult)
                     .WithMany(p => p.Response)
-                    .HasForeignKey(d => d.ResultId)
+                    .HasForeignKey(d => d.TestResultId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Result_Response_Fk");
+                    .HasConstraintName("TestResult_Response_FK");
             });
 
             modelBuilder.Entity<Result>(entity =>
@@ -155,12 +203,6 @@ namespace Domain.Models
                 entity.Property(e => e.EndDate).HasColumnType("timestamp with time zone");
 
                 entity.Property(e => e.StartDate).HasColumnType("timestamp with time zone");
-
-                entity.HasOne(d => d.Test)
-                    .WithMany(p => p.Result)
-                    .HasForeignKey(d => d.TestId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Test_User_Fk");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Result)
@@ -172,14 +214,14 @@ namespace Domain.Models
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                
+                entity.Property(e => e.Denomination)
+                    .IsRequired()
+                    .HasMaxLength(512);
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("timestamp with time zone")
                     .HasColumnName("Created_at");
-
-                entity.Property(e => e.Denomination)
-                    .IsRequired()
-                    .HasMaxLength(256);
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("timestamp with time zone")
@@ -203,15 +245,34 @@ namespace Domain.Models
                     .HasColumnName("Updated_at");
             });
 
+            modelBuilder.Entity<TestResult>(entity =>
+            {
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+                entity.HasOne(d => d.Modality)
+                    .WithMany(p => p.TestResult)
+                    .HasForeignKey(d => d.ModalityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Modality_TestResult_FK");
+
+                entity.HasOne(d => d.Result)
+                    .WithMany(p => p.TestResult)
+                    .HasForeignKey(d => d.ResultId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Result_TestResult_FK");
+
+                entity.HasOne(d => d.Test)
+                    .WithMany(p => p.TestResult)
+                    .HasForeignKey(d => d.TestId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Test_TestResult_FK");
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.Birthday).HasColumnType("timestamp with time zone");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("created_at");
 
                 entity.Property(e => e.Dni)
                     .HasMaxLength(8)
@@ -239,13 +300,17 @@ namespace Domain.Models
 
                 entity.Property(e => e.Phone).HasMaxLength(32);
 
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("updated_at");
-
                 entity.Property(e => e.Username)
                     .IsRequired()
                     .HasMaxLength(512);
+                
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("Created_at");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("Updated_at");
 
                 entity.HasOne(d => d.Rol)
                     .WithMany(p => p.User)

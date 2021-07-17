@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CareerGuidance.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CareerGuidance.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class RecomendationController : ControllerBase
@@ -48,25 +51,21 @@ namespace CareerGuidance.Controllers
         {
             if (id != recomendation.Id)
             {
-                return BadRequest();
+                return BadRequest(ErrorVm.Create("El id de la recomendación no coincide con el objeto enviado"));
             }
 
-            _context.Entry(recomendation).State = EntityState.Modified;
-
+            _context.ChangeTracker.Clear();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                _context.Entry(recomendation).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RecomendationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                await transaction.RollbackAsync();
+                throw;
             }
 
             return NoContent();
@@ -77,8 +76,24 @@ namespace CareerGuidance.Controllers
         [HttpPost]
         public async Task<ActionResult<Recomendation>> PostRecomendation(Recomendation recomendation)
         {
-            _context.Recomendation.Add(recomendation);
-            await _context.SaveChangesAsync();
+            if (recomendation==null)
+            {
+                return BadRequest();
+            }
+            
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
+            try
+            {
+                _context.Recomendation.Add(recomendation);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.CommitAsync();
+                throw;
+            }
 
             return CreatedAtAction("GetRecomendation", new { id = recomendation.Id }, recomendation);
         }

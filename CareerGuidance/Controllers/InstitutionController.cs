@@ -1,12 +1,16 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CareerGuidance.Models;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CareerGuidance.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class InstitutionController : ControllerBase
@@ -44,29 +48,27 @@ namespace CareerGuidance.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInstitution(int id, Institution institution)
         {
-            if (id != institution.Id)
+            var institutionDb = await _context.Institution.SingleOrDefaultAsync(r => r.Id == id);
+
+            if (institutionDb==null)
             {
-                return BadRequest();
+                return BadRequest(ErrorVm.Create("La institución no existe"));
             }
-
-            _context.Entry(institution).State = EntityState.Modified;
-
+            
+            _context.ChangeTracker.Clear();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                institution.UpdatedAt = DateTime.Now;
+                _context.Entry(institution).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!InstitutionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                await transaction.RollbackAsync();
+                throw;
             }
-
             return NoContent();
         }
 
@@ -75,8 +77,32 @@ namespace CareerGuidance.Controllers
         [HttpPost]
         public async Task<ActionResult<Institution>> PostInstitution(Institution institution)
         {
-            _context.Institution.Add(institution);
-            await _context.SaveChangesAsync();
+            if (institution==null)
+            {
+                return BadRequest();
+            }
+            var dbInstitution = await _context.Institution
+                .Where(t => t.Denomination.Equals(institution.Denomination))
+                .SingleOrDefaultAsync();
+            
+            if (dbInstitution != null) return BadRequest(new { error = "La institución ya existe" });
+            
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
+            try
+            {
+                institution.CreatedAt = DateTime.Now;
+                institution.Status = true;
+                _context.Institution.Add(institution);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.CommitAsync();
+                throw;
+            }
+
 
             return CreatedAtAction("GetInstitution", new { id = institution.Id }, institution);
         }

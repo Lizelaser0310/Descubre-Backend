@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CareerGuidance.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CareerGuidance.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class TestController : ControllerBase
@@ -48,25 +51,29 @@ namespace CareerGuidance.Controllers
         {
             if (id != test.Id)
             {
-                return BadRequest();
+                return BadRequest(ErrorVm.Create("El id del test no coincide con el objeto enviado"));
             }
+            
+            var testDb = await _context.Test.SingleOrDefaultAsync(r => r.Id == id);
 
-            _context.Entry(test).State = EntityState.Modified;
-
+            if (testDb==null)
+            {
+                return BadRequest(ErrorVm.Create("El test no existe"));
+            }
+            
+            _context.ChangeTracker.Clear();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                test.UpdatedAt = DateTime.Now;
+                _context.Entry(test).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                await transaction.RollbackAsync();
+                throw;
             }
 
             return NoContent();
@@ -77,8 +84,31 @@ namespace CareerGuidance.Controllers
         [HttpPost]
         public async Task<ActionResult<Test>> PostTest(Test test)
         {
-            _context.Test.Add(test);
-            await _context.SaveChangesAsync();
+            if (test==null)
+            {
+                return BadRequest();
+            }
+            var dbTest = await _context.Test
+                .Where(t => t.Denomination.Equals(test.Denomination))
+                .SingleOrDefaultAsync();
+            
+            if (dbTest != null) return BadRequest(new { error = "El test ya existe" });
+            
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
+            try
+            {
+                test.CreatedAt = DateTime.Now;
+                test.Status = true;
+                _context.Test.Add(test);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.CommitAsync();
+                throw;
+            }
 
             return CreatedAtAction("GetTest", new { id = test.Id }, test);
         }

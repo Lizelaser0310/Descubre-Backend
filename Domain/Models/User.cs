@@ -21,10 +21,9 @@ namespace Domain.Models
         public DateTime Birthday { get; set; }
         public string Gender { get; set; }
         public string Phone { get; set; }
-        public bool Status { get; set; }
-        public string Foto { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public bool Status { get; set; }
 
         public virtual Role Rol { get; set; }
         public virtual ICollection<Result> Result { get; set; }

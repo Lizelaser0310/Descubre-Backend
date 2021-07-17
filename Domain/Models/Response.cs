@@ -6,11 +6,11 @@ namespace Domain.Models
     public partial class Response
     {
         public int Id { get; set; }
-        public int ResultId { get; set; }
-        public int QuestionId { get; set; }
-        public int AlternativeIdx { get; set; }
+        public int TestResultId { get; set; }
+        public int AlternativeId { get; set; }
+        public int Score { get; set; }
 
-        public virtual Question Question { get; set; }
-        public virtual Result Result { get; set; }
+        public virtual Alternative Alternative { get; set; }
+        public virtual TestResult TestResult { get; set; }
     }
 }

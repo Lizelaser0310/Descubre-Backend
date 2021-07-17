@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CareerGuidance.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CareerGuidance.Controllers
 {
+    [Authorize(Roles="Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CareerController : ControllerBase
@@ -48,25 +51,29 @@ namespace CareerGuidance.Controllers
         {
             if (id != career.Id)
             {
-                return BadRequest();
+                return BadRequest(ErrorVm.Create("El id de la carrera no coincide con el objeto enviado"));
             }
+            
+            var careerDb = await _context.Career.SingleOrDefaultAsync(r => r.Id == id);
 
-            _context.Entry(career).State = EntityState.Modified;
-
+            if (careerDb==null)
+            {
+                return BadRequest(ErrorVm.Create("La carrera no existe"));
+            }
+            
+            _context.ChangeTracker.Clear();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                career.UpdatedAt = DateTime.Now;
+                _context.Entry(career).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CareerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                await transaction.RollbackAsync();
+                throw;
             }
 
             return NoContent();
@@ -77,9 +84,31 @@ namespace CareerGuidance.Controllers
         [HttpPost]
         public async Task<ActionResult<Career>> PostCareer(Career career)
         {
-            _context.Career.Add(career);
-            await _context.SaveChangesAsync();
-
+            if (career==null)
+            {
+                return BadRequest();
+            }
+            var dbCareer = await _context.Career
+                .Where(c => c.Denomination.Equals(career.Denomination))
+                .SingleOrDefaultAsync();
+            
+            if (dbCareer != null) return BadRequest(new { error = "La carrera ya existe" });
+            
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
+            try
+            {
+                career.CreatedAt = DateTime.Now;
+                career.Status = true;
+                _context.Career.Add(career);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.CommitAsync();
+                throw;
+            }
             return CreatedAtAction("GetCareer", new { id = career.Id }, career);
         }
 

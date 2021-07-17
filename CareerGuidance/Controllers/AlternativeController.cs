@@ -11,61 +11,61 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CareerGuidance.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles="Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ResultController : ControllerBase
+    public class AlternativeController : ControllerBase
     {
         private readonly DescubreContext _context;
 
-        public ResultController(DescubreContext context)
+        public AlternativeController(DescubreContext context)
         {
             _context = context;
         }
 
-        // GET: api/Result
+        // GET: api/Alternative
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Result>>> GetResult()
+        public async Task<ActionResult<IEnumerable<Alternative>>> GetAlternative()
         {
-            return await _context.Result.ToListAsync();
+            return await _context.Alternative.ToListAsync();
         }
 
-        // GET: api/Result/5
+        // GET: api/Alternative/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result>> GetResult(int id)
+        public async Task<ActionResult<Alternative>> GetAlternative(int id)
         {
-            var result = await _context.Result.FindAsync(id);
+            var alternative = await _context.Alternative.FindAsync(id);
 
-            if (result == null)
+            if (alternative == null)
             {
                 return NotFound();
             }
 
-            return result;
+            return alternative;
         }
 
-        // PUT: api/Result/5
+        // PUT: api/Alternative/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutResult(int id, Result result)
+        public async Task<IActionResult> PutAlternative(int id, Alternative alternative)
         {
-            if (id != result.Id)
+            if (id != alternative.Id)
             {
-                return BadRequest(ErrorVm.Create("El id del resultado no coincide con el objeto enviado"));
+                return BadRequest(ErrorVm.Create("El id de la pregunta no coincide con el objeto enviado"));
             }
             
-            var resultDb = await _context.Result.SingleOrDefaultAsync(r => r.Id == id);
+            var alternativeDb = await _context.Alternative.SingleOrDefaultAsync(r => r.Id == id);
 
-            if (resultDb==null)
+            if (alternativeDb==null)
             {
-                return BadRequest(ErrorVm.Create("El resultado no existe"));
+                return BadRequest(ErrorVm.Create("La alternativa no existe"));
             }
             
             _context.ChangeTracker.Clear();
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                _context.Entry(result).State = EntityState.Modified;
+                _context.Entry(alternative).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
@@ -74,25 +74,30 @@ namespace CareerGuidance.Controllers
                 await transaction.RollbackAsync();
                 throw;
             }
-
+            
             return NoContent();
         }
 
-        // POST: api/Result
+        // POST: api/Alternative
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Result>> PostResult(Result result)
+        public async Task<ActionResult<Alternative>> PostAlternative(Alternative alternative)
         {
-            if (result==null)
+            if (alternative==null)
             {
                 return BadRequest();
             }
+            var dbAlternative = await _context.Alternative
+                .Where(t => t.Denomination.Equals(alternative.Denomination))
+                .SingleOrDefaultAsync();
+            
+            if (dbAlternative != null) return BadRequest(new { error = "La alternativa ya existe" });
             
             await using var transaction = await _context.Database.BeginTransactionAsync();
             
             try
             {
-                _context.Result.Add(result);
+                _context.Alternative.Add(alternative);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
@@ -102,29 +107,28 @@ namespace CareerGuidance.Controllers
                 throw;
             }
 
-
-            return CreatedAtAction("GetResult", new { id = result.Id }, result);
+            return CreatedAtAction("GetALternative", new { id = alternative.Id }, alternative);
         }
 
-        // DELETE: api/Result/5
+        // DELETE: api/Alternative/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteResult(int id)
+        public async Task<IActionResult> DeleteALternative(int id)
         {
-            var result = await _context.Result.FindAsync(id);
-            if (result == null)
+            var alternative = await _context.Alternative.FindAsync(id);
+            if (alternative == null)
             {
                 return NotFound();
             }
 
-            _context.Result.Remove(result);
+            _context.Alternative.Remove(alternative);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool ResultExists(int id)
+        private bool AlternativeExists(int id)
         {
-            return _context.Result.Any(e => e.Id == id);
+            return _context.Alternative.Any(e => e.Id == id);
         }
     }
 }

@@ -104,7 +104,6 @@ namespace CareerGuidance.Controllers
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                user.Foto = ImageUtility.SaveImage(_env.ContentRootPath, user.Foto);
                 user.Password = AuthUtility.HashPassword(user.Password, _keys.EncryptionKey);
                 user.CreatedAt = DateTime.Now;
                 user.Status = true;

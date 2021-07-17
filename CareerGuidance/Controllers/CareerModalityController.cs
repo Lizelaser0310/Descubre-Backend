@@ -14,58 +14,51 @@ namespace CareerGuidance.Controllers
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ResultController : ControllerBase
+    public class CareerModalityController : ControllerBase
     {
         private readonly DescubreContext _context;
 
-        public ResultController(DescubreContext context)
+        public CareerModalityController(DescubreContext context)
         {
             _context = context;
         }
 
-        // GET: api/Result
+        // GET: api/CareerModality
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Result>>> GetResult()
+        public async Task<ActionResult<IEnumerable<CareerModality>>> GetCareerModality()
         {
-            return await _context.Result.ToListAsync();
+            return await _context.CareerModality.ToListAsync();
         }
 
-        // GET: api/Result/5
+        // GET: api/CareerModality/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result>> GetResult(int id)
+        public async Task<ActionResult<CareerModality>> GetCareerModality(int id)
         {
-            var result = await _context.Result.FindAsync(id);
+            var careerModality = await _context.CareerModality.FindAsync(id);
 
-            if (result == null)
+            if (careerModality == null)
             {
                 return NotFound();
             }
 
-            return result;
+            return careerModality;
         }
 
-        // PUT: api/Result/5
+        // PUT: api/CareerModality/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutResult(int id, Result result)
+        public async Task<IActionResult> PutCareerModality(int id, CareerModality careerModality)
         {
-            if (id != result.Id)
+            if (id != careerModality.Id)
             {
-                return BadRequest(ErrorVm.Create("El id del resultado no coincide con el objeto enviado"));
-            }
-            
-            var resultDb = await _context.Result.SingleOrDefaultAsync(r => r.Id == id);
-
-            if (resultDb==null)
-            {
-                return BadRequest(ErrorVm.Create("El resultado no existe"));
+                return BadRequest(ErrorVm.Create("El id de la modalidad por carrera no coincide con el objeto enviado"));
             }
             
             _context.ChangeTracker.Clear();
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                _context.Entry(result).State = EntityState.Modified;
+                _context.Entry(careerModality).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
@@ -75,15 +68,16 @@ namespace CareerGuidance.Controllers
                 throw;
             }
 
+
             return NoContent();
         }
 
-        // POST: api/Result
+        // POST: api/CareerModality
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Result>> PostResult(Result result)
+        public async Task<ActionResult<CareerModality>> PostCareerModality(CareerModality careerModality)
         {
-            if (result==null)
+            if (careerModality==null)
             {
                 return BadRequest();
             }
@@ -92,7 +86,7 @@ namespace CareerGuidance.Controllers
             
             try
             {
-                _context.Result.Add(result);
+                _context.CareerModality.Add(careerModality);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
@@ -102,29 +96,28 @@ namespace CareerGuidance.Controllers
                 throw;
             }
 
-
-            return CreatedAtAction("GetResult", new { id = result.Id }, result);
+            return CreatedAtAction("GetCareerModality", new { id = careerModality.Id }, careerModality);
         }
 
-        // DELETE: api/Result/5
+        // DELETE: api/CareerModality/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteResult(int id)
+        public async Task<IActionResult> DeleteCareerModality(int id)
         {
-            var result = await _context.Result.FindAsync(id);
-            if (result == null)
+            var careerModality = await _context.CareerModality.FindAsync(id);
+            if (careerModality == null)
             {
                 return NotFound();
             }
 
-            _context.Result.Remove(result);
+            _context.CareerModality.Remove(careerModality);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool ResultExists(int id)
+        private bool CareerModalityExists(int id)
         {
-            return _context.Result.Any(e => e.Id == id);
+            return _context.CareerModality.Any(e => e.Id == id);
         }
     }
 }
