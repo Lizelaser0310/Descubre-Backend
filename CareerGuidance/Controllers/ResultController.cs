@@ -47,26 +47,40 @@ namespace CareerGuidance.Controllers
         // PUT: api/Result/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutResult(int id, Result result)
+        public async Task<IActionResult> SaveResult(TestResultDTO result)
         {
-            if (id != result.Id)
+            if (User.Identity?.Name==null)
             {
-                return BadRequest(ErrorVm.Create("El id del resultado no coincide con el objeto enviado"));
+                return BadRequest(ErrorVm.Create("El usuario no está registrado"));
+            }
+            var userid = int.Parse(User.Identity.Name);
+            
+            var currentResult = await _context.Result
+                .Include(r => r.UserId == userid && r.Status.Denomination == $"{ResultStateEnum.Created}").SingleOrDefaultAsync();
+            
+            
+            if (currentResult==null)
+            {
+                return BadRequest(ErrorVm.Create("Debe iniciar un nueva prueba de orientación vocacional"));
             }
             
-            var resultDb = await _context.Result.SingleOrDefaultAsync(r => r.Id == id);
 
-            if (resultDb==null)
-            {
-                return BadRequest(ErrorVm.Create("El resultado no existe"));
-            }
-            
-            _context.ChangeTracker.Clear();
+            var total = 0;
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                _context.Entry(result).State = EntityState.Modified;
+                var testResult = new TestResult()
+                {
+                    ResultId = currentResult.Id,
+                    TestId = result.TestId,
+                    ModalityId = result.ModalityId,
+                    Total = result.Total,
+                };
+                _context.TestResult.Add(testResult);
                 await _context.SaveChangesAsync();
+                
+                
                 await transaction.CommitAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -81,17 +95,42 @@ namespace CareerGuidance.Controllers
         // POST: api/Result
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Result>> PostResult(Result result)
+        public async Task<ActionResult<Result>> CreateResult(Result result)
         {
             if (result==null)
             {
                 return BadRequest();
             }
+
+            if (User.Identity?.Name==null)
+            {
+                return BadRequest(ErrorVm.Create("El usuario no está registrado"));
+            }
+
+            var userid = int.Parse(User.Identity.Name);
+
+            var currentResult = await _context.Result.Include(r=>r.Status)
+                .Where(r => r.UserId== userid || r.Status.Denomination==$"{ResultStateEnum.Created}" || r.Status.Denomination == $"{ResultStateEnum.OnProgress}")
+                .AnyAsync();
+
+            if (currentResult)
+            {
+                return BadRequest(ErrorVm.Create("No puedes iniciar un nuevo test sin haber terminado el anterior"));
+            }
             
+            var status = await _context.Status.FindAsync(result.StatusId);
+
+            if (status==null)
+            {
+                return BadRequest(ErrorVm.Create("Debe asignar un estado al test"));
+            }
+            
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
             
             try
             {
+                result.StartDate = DateTime.Now;
                 _context.Result.Add(result);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -101,7 +140,6 @@ namespace CareerGuidance.Controllers
                 await transaction.CommitAsync();
                 throw;
             }
-
 
             return CreatedAtAction("GetResult", new { id = result.Id }, result);
         }

@@ -25,6 +25,7 @@ namespace Domain.Models
         public virtual DbSet<Response> Response { get; set; }
         public virtual DbSet<Result> Result { get; set; }
         public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<Test> Test { get; set; }
         public virtual DbSet<TestResult> TestResult { get; set; }
         public virtual DbSet<User> User { get; set; }
@@ -71,6 +72,10 @@ namespace Domain.Models
             {
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
 
+                entity.Property(e => e.Categoriaid)
+                    .HasMaxLength(256)
+                    .HasColumnName("categoriaid");
+
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("timestamp with time zone")
                     .HasColumnName("Created_at");
@@ -80,6 +85,16 @@ namespace Domain.Models
                     .HasMaxLength(512);
 
                 entity.Property(e => e.Information).IsRequired();
+
+                entity.Property(e => e.Laborfield)
+                    .HasMaxLength(128)
+                    .HasColumnName("laborfield");
+
+                entity.Property(e => e.Photo).HasColumnName("photo");
+
+                entity.Property(e => e.Salary)
+                    .HasMaxLength(128)
+                    .HasColumnName("salary");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("timestamp with time zone")
@@ -111,11 +126,29 @@ namespace Domain.Models
                     .HasColumnType("timestamp with time zone")
                     .HasColumnName("Created_at");
 
+                entity.Property(e => e.Creationdate)
+                    .HasMaxLength(128)
+                    .HasColumnName("creationdate");
+
                 entity.Property(e => e.Denomination)
                     .IsRequired()
                     .HasMaxLength(1024);
 
+                entity.Property(e => e.Departament)
+                    .HasMaxLength(128)
+                    .HasColumnName("departament");
+
                 entity.Property(e => e.Information).IsRequired();
+
+                entity.Property(e => e.Licensing)
+                    .HasMaxLength(256)
+                    .HasColumnName("licensing");
+
+                entity.Property(e => e.Photo).HasColumnName("photo");
+
+                entity.Property(e => e.Province)
+                    .HasMaxLength(128)
+                    .HasColumnName("province");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("timestamp with time zone")
@@ -204,6 +237,12 @@ namespace Domain.Models
 
                 entity.Property(e => e.StartDate).HasColumnType("timestamp with time zone");
 
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.Result)
+                    .HasForeignKey(d => d.StatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Status_result_Fk");
+
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Result)
                     .HasForeignKey(d => d.UserId)
@@ -214,18 +253,25 @@ namespace Domain.Models
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
-                
-                entity.Property(e => e.Denomination)
-                    .IsRequired()
-                    .HasMaxLength(512);
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("timestamp with time zone")
                     .HasColumnName("Created_at");
 
+                entity.Property(e => e.Denomination)
+                    .IsRequired()
+                    .HasMaxLength(512);
+
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("timestamp with time zone")
                     .HasColumnName("Updated_at");
+            });
+
+            modelBuilder.Entity<Status>(entity =>
+            {
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Denomination).HasMaxLength(32);
             });
 
             modelBuilder.Entity<Test>(entity =>
@@ -274,6 +320,10 @@ namespace Domain.Models
 
                 entity.Property(e => e.Birthday).HasColumnType("timestamp with time zone");
 
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("Created_at");
+
                 entity.Property(e => e.Dni)
                     .HasMaxLength(8)
                     .HasColumnName("DNI");
@@ -300,17 +350,13 @@ namespace Domain.Models
 
                 entity.Property(e => e.Phone).HasMaxLength(32);
 
-                entity.Property(e => e.Username)
-                    .IsRequired()
-                    .HasMaxLength(512);
-                
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("Created_at");
-
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("timestamp with time zone")
                     .HasColumnName("Updated_at");
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(512);
 
                 entity.HasOne(d => d.Rol)
                     .WithMany(p => p.User)
