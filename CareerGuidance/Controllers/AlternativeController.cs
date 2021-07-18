@@ -88,7 +88,7 @@ namespace CareerGuidance.Controllers
                 return BadRequest();
             }
             var dbAlternative = await _context.Alternative
-                .Where(t => t.Denomination.Equals(alternative.Denomination))
+                .Where(t => t.ModalityId==alternative.ModalityId && t.Denomination.Equals(alternative.Denomination))
                 .SingleOrDefaultAsync();
             
             if (dbAlternative != null) return BadRequest(new { error = "La alternativa ya existe" });

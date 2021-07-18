@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace CareerGuidance.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Expert,Student")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
