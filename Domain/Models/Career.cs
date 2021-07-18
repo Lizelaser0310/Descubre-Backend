@@ -16,6 +16,7 @@ namespace Domain.Models
         public string Denomination { get; set; }
         public string Information { get; set; }
         public int Duration { get; set; }
+        public string Link { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
