@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CareerGuidance.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CareerGuidance.Controllers
 {
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CareerController : ControllerBase
@@ -24,6 +23,7 @@ namespace CareerGuidance.Controllers
         }
 
         // GET: api/Career
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Career>>> GetCareer()
         {
@@ -51,16 +51,17 @@ namespace CareerGuidance.Controllers
         {
             if (id != career.Id)
             {
-                return BadRequest(ErrorVm.Create("El id de la carrera no coincide con el objeto enviado"));
+                return BadRequest(
+                    ErrorVm.Create("El id de la carrera no coincide con el objeto enviado"));
             }
-            
+
             var careerDb = await _context.Career.SingleOrDefaultAsync(r => r.Id == id);
 
-            if (careerDb==null)
+            if (careerDb == null)
             {
                 return BadRequest(ErrorVm.Create("La carrera no existe"));
             }
-            
+
             _context.ChangeTracker.Clear();
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -84,18 +85,19 @@ namespace CareerGuidance.Controllers
         [HttpPost]
         public async Task<ActionResult<Career>> PostCareer(Career career)
         {
-            if (career==null)
+            if (career == null)
             {
                 return BadRequest();
             }
+
             var dbCareer = await _context.Career
                 .Where(c => c.Denomination.Equals(career.Denomination))
                 .SingleOrDefaultAsync();
-            
-            if (dbCareer != null) return BadRequest(new { error = "La carrera ya existe" });
-            
+
+            if (dbCareer != null) return BadRequest(new {error = "La carrera ya existe"});
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            
+
             try
             {
                 career.CreatedAt = DateTime.Now;
@@ -109,7 +111,8 @@ namespace CareerGuidance.Controllers
                 await transaction.CommitAsync();
                 throw;
             }
-            return CreatedAtAction("GetCareer", new { id = career.Id }, career);
+
+            return CreatedAtAction("GetCareer", new {id = career.Id}, career);
         }
 
         // DELETE: api/Career/5
