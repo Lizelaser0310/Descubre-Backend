@@ -57,15 +57,18 @@ namespace CareerGuidance.Controllers
             
             var currentResult = await _context.Result
                 .Include(r => r.UserId == userid && r.Status.Denomination == $"{ResultStateEnum.Created}").SingleOrDefaultAsync();
+
+            var statusEnd = await _context.Status.Where(s => s.Denomination == $"{ResultStateEnum.Finished}")
+                .Select(s=>s.Id)
+                .SingleOrDefaultAsync();
             
             
             if (currentResult==null)
             {
                 return BadRequest(ErrorVm.Create("Debe iniciar un nueva prueba de orientación vocacional"));
             }
-            
 
-            var total = 0;
+            List<int> modalitiesIds = new List<int>();
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -80,6 +83,33 @@ namespace CareerGuidance.Controllers
                 _context.TestResult.Add(testResult);
                 await _context.SaveChangesAsync();
                 
+                modalitiesIds.Add(result.ModalityId);
+                
+
+                if (result.IsLast)
+                {
+                    var career = await _context.CareerModality
+                        .Include(cm => cm.Career)
+                        .Where(cm =>
+                            cm.ModalityId == modalitiesIds[0] || cm.ModalityId == modalitiesIds[1] ||
+                            cm.ModalityId == modalitiesIds[2]).Select(cm=>cm.CareerId).SingleOrDefaultAsync();
+
+                    currentResult.StatusId = statusEnd;
+                    currentResult.EndDate=DateTime.Now;
+                    _context.Entry(currentResult).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                    
+
+                    var recomendation = new Recomendation()
+                    {
+                        ResultId = currentResult.Id,
+                        CareerId = career,
+                        Comments = ""
+                    };
+                    
+                    _context.Recomendation.Add(recomendation);
+                    await _context.SaveChangesAsync();
+                }
                 
                 await transaction.CommitAsync();
             }

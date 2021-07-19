@@ -14,7 +14,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="Response" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1160" y="420"/>
+	<position x="1240" y="440"/>
 	<column name="Id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -340,7 +340,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="TestResult" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="740" y="220"/>
+	<position x="840" y="220"/>
 	<column name="Id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
