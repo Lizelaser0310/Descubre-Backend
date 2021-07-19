@@ -88,11 +88,16 @@ namespace CareerGuidance.Controllers
 
                 if (result.IsLast)
                 {
-                    var career = await _context.CareerModality
+                    
+                    var careers = await _context.CareerModality
                         .Include(cm => cm.Career)
-                        .Where(cm =>
-                            cm.ModalityId == modalitiesIds[0] || cm.ModalityId == modalitiesIds[1] ||
-                            cm.ModalityId == modalitiesIds[2]).Select(cm=>cm.CareerId).SingleOrDefaultAsync();
+                        .ToListAsync();
+
+                    var total = 0;
+                    foreach (var item in careers)
+                    {
+                        
+                    }
 
                     currentResult.StatusId = statusEnd;
                     currentResult.EndDate=DateTime.Now;
@@ -103,7 +108,7 @@ namespace CareerGuidance.Controllers
                     var recomendation = new Recomendation()
                     {
                         ResultId = currentResult.Id,
-                        CareerId = career,
+                        //CareerId = career,
                         Comments = ""
                     };
                     
