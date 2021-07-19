@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CareerGuidance.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CareerGuidance.Controllers
 {
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AlternativeController : ControllerBase
@@ -25,8 +24,16 @@ namespace CareerGuidance.Controllers
 
         // GET: api/Alternative
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Alternative>>> GetAlternative()
+        public async Task<ActionResult<IEnumerable<Alternative>>> GetAlternatives(int test)
         {
+            if (test > 0)
+            {
+                return await _context.Alternative
+                    .Include(a => a.Modality)
+                    .Where(a => a.Modality.TestId == test)
+                    .ToListAsync();
+            }
+
             return await _context.Alternative.ToListAsync();
         }
 
@@ -51,16 +58,17 @@ namespace CareerGuidance.Controllers
         {
             if (id != alternative.Id)
             {
-                return BadRequest(ErrorVm.Create("El id de la pregunta no coincide con el objeto enviado"));
+                return BadRequest(
+                    ErrorVm.Create("El id de la pregunta no coincide con el objeto enviado"));
             }
-            
+
             var alternativeDb = await _context.Alternative.SingleOrDefaultAsync(r => r.Id == id);
 
-            if (alternativeDb==null)
+            if (alternativeDb == null)
             {
                 return BadRequest(ErrorVm.Create("La alternativa no existe"));
             }
-            
+
             _context.ChangeTracker.Clear();
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -74,7 +82,7 @@ namespace CareerGuidance.Controllers
                 await transaction.RollbackAsync();
                 throw;
             }
-            
+
             return NoContent();
         }
 
@@ -83,18 +91,21 @@ namespace CareerGuidance.Controllers
         [HttpPost]
         public async Task<ActionResult<Alternative>> PostAlternative(Alternative alternative)
         {
-            if (alternative==null)
+            if (alternative == null)
             {
                 return BadRequest();
             }
+
             var dbAlternative = await _context.Alternative
-                .Where(t => t.ModalityId==alternative.ModalityId && t.Denomination.Equals(alternative.Denomination))
+                .Where(t =>
+                    t.ModalityId == alternative.ModalityId &&
+                    t.Denomination.Equals(alternative.Denomination))
                 .SingleOrDefaultAsync();
-            
-            if (dbAlternative != null) return BadRequest(new { error = "La alternativa ya existe" });
-            
+
+            if (dbAlternative != null) return BadRequest(new {error = "La alternativa ya existe"});
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            
+
             try
             {
                 _context.Alternative.Add(alternative);
@@ -107,7 +118,7 @@ namespace CareerGuidance.Controllers
                 throw;
             }
 
-            return CreatedAtAction("GetALternative", new { id = alternative.Id }, alternative);
+            return CreatedAtAction("GetALternative", new {id = alternative.Id}, alternative);
         }
 
         // DELETE: api/Alternative/5
