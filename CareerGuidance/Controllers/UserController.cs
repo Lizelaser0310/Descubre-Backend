@@ -104,12 +104,13 @@ namespace CareerGuidance.Controllers
                 throw;
             }
 
-            return NoContent();
+            return Ok(user);
         }
 
         // POST: api/User
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> PostUser(User user)
         {
             if (user == null)
