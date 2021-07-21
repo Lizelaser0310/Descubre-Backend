@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CareerGuidance.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using Lizelaser0310.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CareerGuidance.Controllers
 {
@@ -29,6 +28,25 @@ namespace CareerGuidance.Controllers
             _env = env;
         }
 
+        [HttpGet("by-token")]
+        public async Task<ActionResult<User>> GetUserByToken()
+        {
+            if (User.Identity?.Name == null)
+            {
+                return Unauthorized();
+            }
+
+            var userId = int.Parse(User.Identity.Name);
+            var user = await _context.User.FindAsync(userId);
+
+            if (user == null)
+            {
+                return Conflict();
+            }
+
+            return Ok(user);
+        }
+
         // GET: api/User
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
@@ -37,7 +55,7 @@ namespace CareerGuidance.Controllers
         }
 
         // GET: api/User/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _context.User.FindAsync(id);
@@ -57,22 +75,25 @@ namespace CareerGuidance.Controllers
         {
             if (id != user.Id)
             {
-                return BadRequest(ErrorVm.Create("El id del usuario no coincide con el objeto enviado"));
+                return BadRequest(
+                    ErrorVm.Create("El id del usuario no coincide con el objeto enviado"));
             }
 
             var userDb = await _context.User.SingleOrDefaultAsync(u => u.Id == id);
 
-            if (userDb==null)
+            if (userDb == null)
             {
                 return BadRequest(ErrorVm.Create("El usuario no existe"));
             }
-            
+
             _context.ChangeTracker.Clear();
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 user.UpdatedAt = DateTime.Now;
-                user.Password = user.Password!=null? AuthUtility.HashPassword(user.Password,_keys.EncryptionKey):userDb.Password;
+                user.Password = user.Password != null
+                    ? AuthUtility.HashPassword(user.Password, _keys.EncryptionKey)
+                    : userDb.Password;
                 _context.Entry(user).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -83,24 +104,28 @@ namespace CareerGuidance.Controllers
                 throw;
             }
 
-            return NoContent();
+            return Ok(user);
         }
 
         // POST: api/User
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            if (user==null)
+            if (user == null)
             {
                 return BadRequest();
             }
+
             var dbUser = await _context.User
-                .Where(u => u.Username.Equals(user.Username) && u.Email.Equals(user.Email) && u.Dni.Equals(u.Dni))
+                .Where(u =>
+                    u.Username.Equals(user.Username) && u.Email.Equals(user.Email) &&
+                    u.Dni.Equals(u.Dni))
                 .SingleOrDefaultAsync();
-            
-            if (dbUser != null) return BadRequest(new { error = "El usuario ya existe" });
-            
+
+            if (dbUser != null) return BadRequest(new {error = "El usuario ya existe"});
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
@@ -117,7 +142,7 @@ namespace CareerGuidance.Controllers
                 throw;
             }
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return CreatedAtAction("GetUser", new {id = user.Id}, user);
         }
 
         // DELETE: api/User/5
