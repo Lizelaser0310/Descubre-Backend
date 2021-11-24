@@ -1,6 +1,6 @@
 # Vocational guidance system - Descubre
-> Outline a brief description of your project.
-> Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
+> Vocational Guidance application containing psychometric test sections and career information as a guide for students.
+
 
 ## Table of Contents
 * [General Info](#general-information)
@@ -16,9 +16,6 @@
 
 
 ## General Information
-
-### **Introduction**
-<p align="justify">Vocational guidance includes all counseling activities related to career choice throughout life.  In the vocational guidance process, self-knowledge, information about the work environment, and individual needs (including family, work, personal concerns, and leisure) are recognized as integral to decision making and career planning.<p>
 
 ### **Problem**
 <p align="justify">The lack of vocational orientation in young people in the pre-university stage can be attributed to the problem of choosing a career that is not in accordance with their interests, abilities and aptitudes. An erroneous career decision could lead to various problems in the course of the decision-maker's personal, university and work life, such as desertion, poor university performance, work frustration, repercussions on physical health, stress, anxiety, poor work performance, feelings of failure and personal dissatisfaction.</p>
@@ -121,44 +118,36 @@ According to the requirements, the api must contain the following end points.
 * `POST /recommendation`
 
 
-
 ## Setup
 
-### **Prerequisites**
-#### **Backend**
+### Requirements
+* You must have [.NET](https://dotnet.microsoft.com/download) version 6.0
+* You also must have [GIT](https://git-scm.com/) if you want to contribute to the project.
 
-- Clone the repo via [github-cli](https://cli.github.com/)
-  ```bash
-  gh repo clone lizelaser/descubre-back-end
-  ```
-  OR
+### Get the repository locally
+First of all, clone the repository:
 
-  ```bash
-  git clone https://github.com/lizelaser/descubre-back-end.git
-  ```
+```bash
+git clone git@github.com:lizelaser/descubre-back-end.git
+cd <path_to_project>
+```
 
-- Install dotnet tools via [net-cli](https://docs.microsoft.com/en-us/dotnet/core/tools/)
+## Usage
 
-  ```bash
-  # dotnet
-  dotnet tool install --global dotnet-ef
-  ```
+### Build and launch for development
+Start a development server and launch the project on localhost:5000
 
-### **Instalation**
+```bash
+dotnet run
+```
 
-- Scaffold
-  ```bash
-  # dotnet ef
-  dotnet ef dbcontext scaffold "Host=.;Database=Descubre;Username={username};Password={password}"  Npgsql.EntityFrameworkCore.PostgreSQL -o ../Domain/Models -c DescubreContext -n Domain.Models -f --no-pluralize
+### Build and minifies for production
+Builds the project and its dependencies into a set of binaries.
 
-  ```
+```bash
+dotnet build
+```
 
-- Run the app at port 5000 via [net-cli](https://docs.microsoft.com/en-us/dotnet/core/tools/)
-
-  ```bash
-  # dotnet
-  dotnet run
-  ```
 
 ## Interfaces
 
@@ -186,7 +175,7 @@ According to the requirements, the api must contain the following end points.
 
 
 ## Room for Improvement
-----
+
 Room for improvement:
 - Serve to production on live environment
 
@@ -199,7 +188,5 @@ To do:
 
 Lizeth La Serna - [@lizelaser](https://github.com/lizelaser) - lizeth.lasernafelices@gmail.com
 
-Project Link: [https://github.com/lizelaser/descubre-front-end](https://github.com/lizelaser/descubre-back-end.git)
+Project Link: [https://github.com/lizelaser/descubre-back-end](https://github.com/lizelaser/descubre-back-end.git)
 
-
-<p align="right">(<a href="#top">back to top</a>)</p>
