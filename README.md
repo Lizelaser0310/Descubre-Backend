@@ -4,12 +4,12 @@
 
 ## Table of Contents
 * [General Info](#general-information)
-* [Requirements](#requirements)
-* [Initial Architecture](#initial-architecture)
 * [Technologies Used](#technologies-used)
 * [HTTP API](#http-api)
-* [Interfaces](#interfaces)
 * [Setup](#setup)
+* [Usage](#usage)
+* [Contribution](#contribution)
+* [Interfaces](#interfaces)
 * [Project Status](#project-status)
 * [Room for Improvement](#room-for-improvement)
 * [Contact](#contact)
@@ -24,7 +24,7 @@
 <p align="justify">The objective of this project is to develop a vocational guidance application with web technologies, based on psychometric tests of vocational preferences, aptitudes and behavioral profile, with the purpose of supporting pre-university students in the choice of a university or technical career.</p>
 
 
-## Requirements
+### **Requirements**
 
 
 |   **User story**                |          **Description**         |
@@ -39,9 +39,9 @@
 
 ## Technologies Used
 
-- Net - version 6.0
-- Entity Framework Core - version 6.0.0
-- PostgreSQL/Npgsql - version 6.0.0
+- .NET - version 6.0
+- Microsoft.EntityFrameworkCore - version 6.0.0
+- Npgsql.EntityFrameworkCore.PostgreSQL - version 6.0.0
 - Lizelaser0310.Utilities - version 0.1.17
 
 
@@ -148,6 +148,17 @@ Builds the project and its dependencies into a set of binaries.
 dotnet build
 ```
 
+## Contribution
+To contribute to MPB, follow these steps:
+
+1. Fork this repository.
+2. Create a branch: `git checkout -b <branch_name>`.
+3. Make your changes and commit them: `git commit -m '<commit_message>'`
+4. Push to the original branch: `git push origin <project_name>/<location>`
+5. Create the pull request.
+
+Alternatively see the GitHub documentation on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
+
 
 ## Interfaces
 
@@ -177,11 +188,13 @@ dotnet build
 ## Room for Improvement
 
 Room for improvement:
-- Serve to production on live environment
+- Expand the web system by implementing a module for counseling psychologists that allows them to manage psychometric tests, upload information on careers and universities, and schedule meetings.
+
+- Conduct comprehensive planning to support the implementation of other functionalities associated with vocational guidance variables targeting undergraduate and graduate students in the system.
 
 To do:
-- Automating tests that include other influential variables in vocational guidance
-
+- Perform unit and integration testing.
+- Serve to production on live environment.
 
 
 ## Contact
